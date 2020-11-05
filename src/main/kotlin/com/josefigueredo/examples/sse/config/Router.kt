@@ -14,11 +14,13 @@ class Router {
             router {
                 accept(MediaType.APPLICATION_JSON)
                         .nest {
-                            POST("/add", tweetHandler::add)
+                            POST("/tweet",
+                                    tweetHandler::tweet)
                         }
                 accept(MediaType.TEXT_EVENT_STREAM)
                         .nest {
-                            GET("/stream", tweetHandler::stream)
+                            GET("/stream",
+                                    tweetHandler::stream)
                         }
             }
 }

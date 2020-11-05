@@ -9,29 +9,30 @@ import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.body
 import org.springframework.web.reactive.function.server.sse
-import reactor.core.publisher.Mono
 
 @Component
 class TweetHandler @Autowired constructor(
         private var tweetRepository: TweetRepository
 ) {
 
-    fun add(request: ServerRequest): Mono<ServerResponse> =
-            ServerResponse.ok()
+    fun tweet(request: ServerRequest) =
+            ServerResponse
+                    .ok()
                     .body(
-                            tweetRepository.add(
+                            tweetRepository.publish(
                                     request.bodyToMono(
                                             Tweet::class.java
                                     )
                             )
                     )
 
-    fun stream(serverRequest: ServerRequest): Mono<ServerResponse> =
+    fun stream(serverRequest: ServerRequest) =
             ServerResponse
                     .ok()
                     .sse()
                     .body(
-                            tweetRepository.stream()
+                            tweetRepository
+                                    .listen()
                                     .asPublisher()
                     )
 }

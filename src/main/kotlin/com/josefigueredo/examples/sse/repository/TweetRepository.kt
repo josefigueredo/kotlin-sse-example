@@ -16,21 +16,22 @@ class TweetRepository(
         private const val TWEET_CHANNEL = "TWEET_CHANNEL"
     }
 
-    fun add(monoTweet: Mono<Tweet>): Mono<Tweet> =
+    fun publish(monoTweet: Mono<Tweet>) =
             monoTweet
                     .flatMap {
                         redisTemplate
                                 .convertAndSend(
                                         TWEET_CHANNEL,
-                                        it
+                                        it // it: Tweet!
                                 )
                     }
-                    .flatMap { monoTweet }
 
-    fun stream(): Flow<Tweet> =
+    fun listen(): Flow<Tweet> =
             redisTemplate
                     .listenToChannelAsFlow(
                             TWEET_CHANNEL
                     )
-                    .map { it.message }
+                    .map {
+                        it.message // it: reactiveSubscription.Message<String, Tweet!>
+                    }
 }
